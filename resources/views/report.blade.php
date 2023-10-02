@@ -33,6 +33,10 @@
             text-align: center;
         }
 
+        td {
+            /* font-size: 14px; */
+        }
+
         h3 {
             text-align: center;
             margin: 0px;
@@ -80,6 +84,11 @@
                 <th>No</th>
                 <th>Tanggal</th>
                 <th>Uraian Kegiatan</th>
+                @if ($signature->paraf_mahasiswa)
+                    <th>Paraf Mahasiswa</th>
+                    <th>Paraf Pembimbing Lapangan</th>
+                    <th>Paraf Dosen Pembimbing</th>
+                @endif
             </tr>
         </thead>
         <tbody>
@@ -88,6 +97,17 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $log->tanggal }}</td>
                     <td>{{ $log->report }}</td>
+                    @if ($signature->paraf_mahasiswa)
+                        <td>
+                            <img src="{{ $signature->paraf_mahasiswa }}" alt="signature" width="80px">
+                        </td>
+                        <td>
+                            <img src="{{ $signature->paraf_pembimbing }}" alt="signature" width="80px">
+                        </td>
+                        <td>
+                            <img src="{{ $signature->paraf_dosen }}" alt="signature" width="80px">
+                        </td>
+                    @endif
                 </tr>
             @endforeach
         </tbody>

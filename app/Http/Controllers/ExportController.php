@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use stdClass;
 
 class ExportController extends Controller
 {
@@ -129,13 +130,24 @@ class ExportController extends Controller
         return $id_activity;
     }
 
-    public function index(Request $request)
+    public function index()
+    {
+        return view('home');
+    }
+
+    public function export(Request $request)
     {
         $minggu = $request->minggu;
         $email = $request->email;
         $password = $request->password;
-        $this->loginApi($email, $password);
-        // $this->token = $token ?? "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYTgxM2RhZDctYzYwYi00Mzc2LWJhNGQtZTYwNWVkNGQ4ZGY0IiwicnQiOmZhbHNlLCJleHAiOjE2OTYyMjE1NDgsImlhdCI6MTY5NjIxOTc0OCwiaXNzIjoiV2FydGVrLUlEIiwibmFtZSI6Ikhlcmx5IENoYWh5YSBQdXRyYSIsInJvbGVzIjpbIm1haGFzaXN3YSJdLCJwdF9jb2RlIjoiMDUxMDI0IiwiaGFzX2FkbWluX3JvbGUiOmZhbHNlLCJtaXRyYV9pZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImVtYWlsIjoiaGVybHljcEBzdHVkZW50cy5hbWlrb20uYWMuaWQiLCJzZWtvbGFoX25wc24iOiIifQ.AMrwNXJBvhMPwZAwdvPNpYE86jZOEhbRhMDHl3fogztoEHHuGJjvCjDOjzbNzKRvDy15l0HAPwl7ili0_VTPog";
+
+        if ($request->token) {
+            $this->token = $request->token;
+        }
+
+        if ($this->token == null) {
+            $this->loginApi($email, $password);
+        }
 
         $id_activity = $this->getIdMagang();
 
@@ -176,8 +188,13 @@ class ExportController extends Controller
             });
         }
 
+        $signature = new stdClass();
+        $signature->paraf_mahasiswa = $request->paraf_mahasiswa;
+        $signature->paraf_pembimbing = $request->paraf_pembimbing;
+        $signature->paraf_dosen = $request->paraf_dosen;
+
         //render dompdf
-        $pdf = PDF::loadView('report', compact('reports', 'location', 'minggu', 'profile'));
+        $pdf = PDF::loadView('report', compact('reports', 'location', 'minggu', 'profile', 'signature'));
 
         return $pdf->stream();
 

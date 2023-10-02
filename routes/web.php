@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [ExportController::class, 'index'])->name('home');
 
-Route::get('/export', [ExportController::class, 'index'])->name('export');
+Route::get('/export', [ExportController::class, 'export'])->name('export');
