@@ -80,7 +80,14 @@ class ExportController extends Controller
     {
         $response = $this->fetchApi('GET', 'mbkm/mahasiswa/activities');
 
-        return $response[0]->id;
+        //if response length > 0 then get the 1 index
+        if (count($response) > 0) {
+            $id_activity = $response[1]->id;
+        } else {
+            $id_activity = $response[0]->id;
+        }
+
+        return $id_activity;
     }
 
     public function index(Request $request)
