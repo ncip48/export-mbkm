@@ -162,11 +162,11 @@ class ExportController extends Controller
         setlocale(LC_ALL, 'IND');
         //set locale for vps
         setlocale(LC_TIME, 'id_ID.utf8');
+        Carbon::setLocale('id');
 
         foreach ($reports as $report) {
             foreach ($report->daily_report as $d) {
                 //set locale carbon to INDONESIA
-                Carbon::setLocale('id');
                 $d->report_date = Carbon::parse($d->report_date)->formatLocalized('%A, %d %B %Y');
                 $newReports[] = [
                     'report' => $d->report,
