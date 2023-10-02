@@ -141,6 +141,11 @@ class ExportController extends Controller
         $email = $request->email;
         $password = $request->password;
 
+        //explode minggu jika ada ,
+        if (strpos($minggu, ',') !== false) {
+            $minggu = explode(',', $minggu);
+        }
+
         if ($request->token) {
             $this->token = $request->token;
         }
@@ -183,19 +188,41 @@ class ExportController extends Controller
         $reports = json_encode($newReports);
         $reports = json_decode($reports);
 
-
-
-        //if minggu is set
-        if ($minggu) {
-            $reports = array_filter($reports, function ($report) use ($minggu) {
-                return $report->minggu == $minggu;
-            });
+        //if minggu is set and more than 1 separated by comma then get data
+        if (is_array($minggu)) {
+            $newReports = [];
+            foreach ($minggu as $m) {
+                foreach ($reports as $report) {
+                    if ($report->minggu == $m) {
+                        $newReports[] = $report;
+                    }
+                }
+            }
+            $reports = $newReports;
+        } else if (!is_array($minggu)) {
+            if (!$minggu) {
+                $reports = $reports;
+            } else {
+                $newReports = [];
+                foreach ($reports as $report) {
+                    if ($report->minggu == $minggu) {
+                        $newReports[] = $report;
+                    }
+                }
+                $reports = $newReports;
+            }
         }
 
         $signature = new stdClass();
         $signature->paraf_mahasiswa = $request->file('paraf_mahasiswa') ? "data:image/png;base64," . base64_encode(file_get_contents($request->file('paraf_mahasiswa'))) : '';
         $signature->paraf_pembimbing = $request->file('paraf_pembimbing') ? "data:image/png;base64," . base64_encode(file_get_contents($request->file('paraf_pembimbing'))) : '';
         $signature->paraf_dosen = $request->file('paraf_dosen') ? "data:image/png;base64," . base64_encode(file_get_contents($request->file('paraf_dosen'))) : '';
+
+        if (is_array($minggu)) {
+            $minggu = implode(', ', $minggu);
+        } else {
+            $minggu = $minggu;
+        }
 
         //render dompdf
         $pdf = PDF::loadView('report', compact('reports', 'location', 'minggu', 'profile', 'signature'));
