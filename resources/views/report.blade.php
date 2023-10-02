@@ -50,6 +50,10 @@
         .identity tr td {
             border: none !important;
         }
+
+        .text-center {
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -98,13 +102,13 @@
                     <td>{{ $log->tanggal }}</td>
                     <td>{{ $log->report }}</td>
                     @if ($signature->paraf_mahasiswa)
-                        <td>
+                        <td class="text-center">
                             <img src="{{ $signature->paraf_mahasiswa }}" alt="signature" width="80px">
                         </td>
-                        <td>
+                        <td class="text-center">
                             <img src="{{ $signature->paraf_pembimbing }}" alt="signature" width="80px">
                         </td>
-                        <td>
+                        <td class="text-center">
                             <img src="{{ $signature->paraf_dosen }}" alt="signature" width="80px">
                         </td>
                     @endif

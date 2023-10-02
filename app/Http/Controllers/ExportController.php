@@ -189,9 +189,9 @@ class ExportController extends Controller
         }
 
         $signature = new stdClass();
-        $signature->paraf_mahasiswa = $request->paraf_mahasiswa;
-        $signature->paraf_pembimbing = $request->paraf_pembimbing;
-        $signature->paraf_dosen = $request->paraf_dosen;
+        $signature->paraf_mahasiswa = $request->file('paraf_mahasiswa') ? "data:image/png;base64," . base64_encode(file_get_contents($request->file('paraf_mahasiswa'))) : '';
+        $signature->paraf_pembimbing = $request->file('paraf_pembimbing') ? "data:image/png;base64," . base64_encode(file_get_contents($request->file('paraf_pembimbing'))) : '';
+        $signature->paraf_dosen = $request->file('paraf_dosen') ? "data:image/png;base64," . base64_encode(file_get_contents($request->file('paraf_dosen'))) : '';
 
         //render dompdf
         $pdf = PDF::loadView('report', compact('reports', 'location', 'minggu', 'profile', 'signature'));

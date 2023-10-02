@@ -46,7 +46,8 @@
 
 <body>
     <h1>Generate Logbook MBKM</h1>
-    <form action="{{ route('export') }}" method="get" enctype="multipart/form-data" autocomplete="off">
+    <form action="{{ route('export') }}" method="POST" enctype="multipart/form-data" autocomplete="off">
+        @csrf
         <div class="form-group">
             <label for="email">*Email:</label>
             <input type="email" id="email" name="email" required>
