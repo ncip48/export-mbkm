@@ -62,7 +62,7 @@
         </div>
         <div class="form-group">
             <label for="minggu">Minggu:</label>
-            <input type="text" id="minggu" name="minggu" required>
+            <input type="text" id="minggu" name="minggu">
         </div>
         <div class="form-group">
             <label for="paraf_mahasiswa">Paraf Mahasiswa:</label>
