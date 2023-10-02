@@ -219,7 +219,12 @@ class ExportController extends Controller
         $signature->paraf_dosen = $request->file('paraf_dosen') ? "data:image/png;base64," . base64_encode(file_get_contents($request->file('paraf_dosen'))) : '';
 
         if (is_array($minggu)) {
-            $minggu = implode(', ', $minggu);
+            //jika minggu lebih dari 2 maka dibuat 7-8 misal
+            if (count($minggu) > 2) {
+                $minggu = min($minggu) . ' - ' . max($minggu);
+            } else {
+                $minggu = implode(', ', $minggu);
+            }
         } else {
             $minggu = $minggu;
         }
