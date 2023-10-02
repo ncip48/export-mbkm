@@ -100,7 +100,7 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $log->tanggal }}</td>
-                    <td>{{ $log->report }}</td>
+                    <td>{!! nl2br($log->report) !!}</td>
                     @if ($signature->paraf_mahasiswa)
                         <td class="text-center">
                             <img src="{{ $signature->paraf_mahasiswa }}" alt="signature" width="80px">
