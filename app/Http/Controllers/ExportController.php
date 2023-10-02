@@ -9,8 +9,9 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class ExportController extends Controller
 {
     private $token;
+    private $refresh_token;
 
-    private function loginApi()
+    private function loginApi($email, $password)
     {
         $curl = curl_init();
 
@@ -24,8 +25,8 @@ class ExportController extends Controller
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => '{
-    "email": "herlycp@students.amikom.ac.id",
-    "password": "Mbahcip123"
+    "email": "' . $email . '",
+    "password": "' . $password . '"
     }',
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
@@ -40,9 +41,44 @@ class ExportController extends Controller
         //change to stdClass
         $response = json_decode($response);
 
-        $this->token = $response->data->token;
+        $this->token = $response->data->access_token;
         return;
     }
+
+    private function refreshToken()
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.kampusmerdeka.kemdikbud.go.id/user/auth/refresh_token',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+    "refresh_token": "' . $this->refresh_token . '"
+    }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        //change to stdClass
+        $response = json_decode($response);
+
+        $this->token = $response->data->access_token;
+        $this->refresh_token = $response->data->refresh_token;
+        return;
+    }
+
 
     private function fetchApi($method, $endpoint)
     {
@@ -71,8 +107,11 @@ class ExportController extends Controller
         //change to stdClass
         $response = json_decode($response);
 
-        // return $response->data;
-
+        //if response has error then refresh token
+        if (isset($response->error)) {
+            $this->refreshToken();
+            $this->fetchApi($method, $endpoint);
+        }
         return $response->data;
     }
 
@@ -81,7 +120,7 @@ class ExportController extends Controller
         $response = $this->fetchApi('GET', 'mbkm/mahasiswa/activities');
 
         //if response length > 0 then get the 1 index
-        if (count($response) > 0) {
+        if (count($response) > 1) {
             $id_activity = $response[1]->id;
         } else {
             $id_activity = $response[0]->id;
@@ -93,9 +132,10 @@ class ExportController extends Controller
     public function index(Request $request)
     {
         $minggu = $request->minggu;
-        $token = $request->token;
-        // $this->loginApi();
-        $this->token = $token ?? "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYTgxM2RhZDctYzYwYi00Mzc2LWJhNGQtZTYwNWVkNGQ4ZGY0IiwicnQiOmZhbHNlLCJleHAiOjE2OTYyMTU5ODUsImlhdCI6MTY5NjIxNDE4NSwiaXNzIjoiV2FydGVrLUlEIiwibmFtZSI6Ikhlcmx5IENoYWh5YSBQdXRyYSIsInJvbGVzIjpbIm1haGFzaXN3YSJdLCJwdF9jb2RlIjoiMDUxMDI0IiwiaGFzX2FkbWluX3JvbGUiOmZhbHNlLCJtaXRyYV9pZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImVtYWlsIjoiIiwic2Vrb2xhaF9ucHNuIjoiIn0.LxO35xmdDH3hQYQOO-H65SNkLvJk0OfuIUgQMedYBMprU2zwlOdJ_XXZBElizG8qie4wHucNJ33kUfTDF-kqOA";
+        $email = $request->email;
+        $password = $request->password;
+        $this->loginApi($email, $password);
+        // $this->token = $token ?? "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYTgxM2RhZDctYzYwYi00Mzc2LWJhNGQtZTYwNWVkNGQ4ZGY0IiwicnQiOmZhbHNlLCJleHAiOjE2OTYyMjE1NDgsImlhdCI6MTY5NjIxOTc0OCwiaXNzIjoiV2FydGVrLUlEIiwibmFtZSI6Ikhlcmx5IENoYWh5YSBQdXRyYSIsInJvbGVzIjpbIm1haGFzaXN3YSJdLCJwdF9jb2RlIjoiMDUxMDI0IiwiaGFzX2FkbWluX3JvbGUiOmZhbHNlLCJtaXRyYV9pZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImVtYWlsIjoiaGVybHljcEBzdHVkZW50cy5hbWlrb20uYWMuaWQiLCJzZWtvbGFoX25wc24iOiIifQ.AMrwNXJBvhMPwZAwdvPNpYE86jZOEhbRhMDHl3fogztoEHHuGJjvCjDOjzbNzKRvDy15l0HAPwl7ili0_VTPog";
 
         $id_activity = $this->getIdMagang();
 
