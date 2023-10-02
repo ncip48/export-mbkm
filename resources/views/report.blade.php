@@ -36,7 +36,7 @@
         h3 {
             text-align: center;
             margin: 0px;
-
+            text-transform: uppercase;
         }
 
         .identity {
@@ -52,7 +52,8 @@
 <body>
     <h3>LOGBOOK KEGIATAN</h3>
     <h3>PRAKTEK KERJA LAPANGAN TAHUN AJAR 2023/2024</h3>
-    <h3>PROGRAM STUDI D3 TEKNIK INFORMATIKA</h3>
+    <h3>{{ $profile->pt_name }}</h3>
+    <h3>PROGRAM STUDI {{ $profile->jenjang_name }} {{ $profile->prodi_name }}</h3>
     <h3 style="margin-bottom: 20px">MAGANG MBKM</h3>
 
     <table class="identity" style="border: none">

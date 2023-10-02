@@ -88,7 +88,7 @@ class ExportController extends Controller
         $minggu = $request->minggu;
         $token = $request->token;
         // $this->loginApi();
-        $this->token = $token ?? "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYTgxM2RhZDctYzYwYi00Mzc2LWJhNGQtZTYwNWVkNGQ4ZGY0IiwicnQiOmZhbHNlLCJleHAiOjE2OTYyMTQxNjUsImlhdCI6MTY5NjIxMjM2NSwiaXNzIjoiV2FydGVrLUlEIiwibmFtZSI6Ikhlcmx5IENoYWh5YSBQdXRyYSIsInJvbGVzIjpbIm1haGFzaXN3YSJdLCJwdF9jb2RlIjoiMDUxMDI0IiwiaGFzX2FkbWluX3JvbGUiOmZhbHNlLCJtaXRyYV9pZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImVtYWlsIjoiIiwic2Vrb2xhaF9ucHNuIjoiIn0.xlJxny-bx7F5T8vm33CtCWv-ur8aghFQcnxs5i3QY9nH5Et0ZgeddzJrJXMkLA5YWSp4zXBqUD7px26HyA5uUw";
+        $this->token = $token ?? "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYTgxM2RhZDctYzYwYi00Mzc2LWJhNGQtZTYwNWVkNGQ4ZGY0IiwicnQiOmZhbHNlLCJleHAiOjE2OTYyMTU5ODUsImlhdCI6MTY5NjIxNDE4NSwiaXNzIjoiV2FydGVrLUlEIiwibmFtZSI6Ikhlcmx5IENoYWh5YSBQdXRyYSIsInJvbGVzIjpbIm1haGFzaXN3YSJdLCJwdF9jb2RlIjoiMDUxMDI0IiwiaGFzX2FkbWluX3JvbGUiOmZhbHNlLCJtaXRyYV9pZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImVtYWlsIjoiIiwic2Vrb2xhaF9ucHNuIjoiIn0.LxO35xmdDH3hQYQOO-H65SNkLvJk0OfuIUgQMedYBMprU2zwlOdJ_XXZBElizG8qie4wHucNJ33kUfTDF-kqOA";
 
         $id_activity = $this->getIdMagang();
 
