@@ -200,7 +200,8 @@ class ExportController extends Controller
         //render dompdf
         $pdf = PDF::loadView('report', compact('reports', 'location', 'minggu', 'profile', 'signature'));
 
-        return $pdf->stream();
+        $random = rand(1, 1000000);
+        return $pdf->stream('logbook' . $random . '.pdf');
 
         // return view('report', compact('reports', 'location', 'minggu', 'profile'));
     }
