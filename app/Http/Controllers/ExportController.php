@@ -160,6 +160,8 @@ class ExportController extends Controller
 
         $newReports = [];
         setlocale(LC_ALL, 'IND');
+        //set locale for vps
+        setlocale(LC_TIME, 'id_ID.utf8');
 
         foreach ($reports as $report) {
             foreach ($report->daily_report as $d) {
