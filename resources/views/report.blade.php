@@ -70,7 +70,7 @@
         <tr>
             <td>Minggu Ke</td>
             <td>:</td>
-            <td>{{ $minggu }}</td>
+            <td>{{ $minggu ?? 'Semua' }}</td>
         </tr>
     </table>
 
