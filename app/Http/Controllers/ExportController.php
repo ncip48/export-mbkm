@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\LogbookExport;
+use App\Exports\LogbookMingguanExport;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -135,7 +136,33 @@ class ExportController extends Controller
 
     public function index()
     {
-        return View('home');
+        $items = new stdClass();
+        //make an array of an object
+        $items = [];
+        $items[] = (object) [
+            'id' => 1,
+            'name' => 'Harian',
+            'detail' => 'Export logbook harianmu disini guysssss',
+            'url' => route('home-harian'),
+        ];
+        $items[] = (object) [
+            'id' => 2,
+            'name' => 'Mingguan',
+            'detail' => 'Export logbook mingguanmu disini guysssss',
+            'url' => route('home-mingguan'),
+        ];
+
+        return View('home', compact('items'));
+    }
+
+    public function indexHarian()
+    {
+        return View('home_harian');
+    }
+
+    public function indexMingguan()
+    {
+        return View('home_mingguan');
     }
 
     public function export(Request $request)
@@ -344,10 +371,109 @@ class ExportController extends Controller
             $profile,
             $signature
         ), 'public/excel/' . $random_name . '.xlsx');
-        
+
         //redirect to file
         return redirect()->to('storage/excel/' . $random_name . '.xlsx');
-
     }
 
+    public function ExportExcelMingguan(Request $request)
+    {
+        $minggu = $request->minggu;
+        $email = $request->email;
+        $password = $request->password;
+
+        //explode minggu jika ada ,
+        if (strpos($minggu, ',') !== false) {
+            $minggu = explode(',', $minggu);
+        }
+
+        if ($request->token) {
+            $this->token = $request->token;
+        }
+
+        if ($this->token == null) {
+            $this->loginApi($email, $password);
+        }
+
+        $id_activity = $this->getIdMagang();
+
+        $reports = $this->fetchApi('GET', 'magang/report/allweeks/' . $id_activity);
+
+        $location = $this->fetchApi('GET', 'magang/report/summary/' . $id_activity);
+        $location = $location->activity->brand_name;
+
+        $profile = $this->fetchApi('GET', 'mbkm/mahasiswa/profile');
+
+        $newReports = [];
+        setlocale(LC_ALL, 'IND');
+        //set locale for vps
+        setlocale(LC_TIME, 'id_ID.utf8');
+        Carbon::setLocale('id');
+
+        foreach ($reports as $report) {
+            $newReports[] = [
+                'report' => $report->learned_weekly,
+                'minggu' => $report->counter,
+            ];
+        }
+
+        // dd($newReports);
+        //sort by minggu
+        usort($newReports, function ($a, $b) {
+            return $a['minggu'] <=> $b['minggu'];
+        });
+
+        $reports = json_encode($newReports);
+        $reports = json_decode($reports);
+
+        //if minggu is set and more than 1 separated by comma then get data
+        if (is_array($minggu)) {
+            $newReports = [];
+            foreach ($minggu as $m) {
+                foreach ($reports as $report) {
+                    if ($report->minggu == $m) {
+                        $newReports[] = $report;
+                    }
+                }
+            }
+            $reports = $newReports;
+        } else if (!is_array($minggu)) {
+            if (!$minggu) {
+                $reports = $reports;
+            } else {
+                $newReports = [];
+                foreach ($reports as $report) {
+                    if ($report->minggu == $minggu) {
+                        $newReports[] = $report;
+                    }
+                }
+                $reports = $newReports;
+            }
+        }
+
+        // dd($reports);
+
+        if (is_array($minggu)) {
+            //jika minggu lebih dari 2 maka dibuat 7-8 misal
+            if (count($minggu) > 2) {
+                $minggu = min($minggu) . ' - ' . max($minggu);
+            } else {
+                $minggu = implode(', ', $minggu);
+            }
+        } else {
+            $minggu = $minggu;
+        }
+
+        $random_name = rand(1000, 9999);
+
+        Excel::store(new LogbookMingguanExport(
+            $reports,
+            $location,
+            $minggu,
+            $profile
+        ), 'public/excel/' . $random_name . '.xlsx');
+
+        //redirect to file
+        return redirect()->to('storage/excel/' . $random_name . '.xlsx');
+    }
 }

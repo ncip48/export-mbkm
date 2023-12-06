@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [ExportController::class, 'index'])->name('home');
+Route::get('', [ExportController::class, 'index'])->name('home');
+Route::get('harian', [ExportController::class, 'indexHarian'])->name('home-harian');
+Route::get('mingguan', [ExportController::class, 'indexMingguan'])->name('home-mingguan');
 
-Route::post('/export', [ExportController::class, 'ExportExcel'])->name('export');
+Route::post('export', [ExportController::class, 'ExportExcel'])->name('export');
+Route::post('mingguan', [ExportController::class, 'ExportExcelMingguan'])->name('export-mingguan');
